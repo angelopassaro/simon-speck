@@ -1,5 +1,5 @@
-#ifndef _SPECK128256_H
-#define _SPECK128256_H
+#ifndef _SPECK_H
+#define _SPECK_H
 
 #include "../common/utils.c"
 
