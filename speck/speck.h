@@ -1,7 +1,7 @@
 #ifndef _SPECK_H
 #define _SPECK_H
 
-#include "../common/utils.c"
+#include "../common/utils.h"
 
 /**
 * Generate round keys from given key

@@ -1,6 +1,11 @@
-#define speck128256
+//#define speck128256
+#define simon6496
+
 #ifdef speck128256
 #include "speck/speck128256.c"
+#endif
+#ifdef simon6496
+#include "simon/simon6496.c"
 #endif
 #include "speck/speck.h"
 #include <stdio.h>
@@ -28,10 +33,10 @@ int main()
     u8 k[32] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f};
 
     u8 ct[16];
-    u64 K[4];
+    u64 K[4]; // 4 * 64
     u64 Pt[2];
     u64 Ct[2];
-    u64 rk[34]; // speck 128/256 34 round
+    u64 rk[34];
 
     BytesToWords64((u8 *)pt, (u64 *)Pt, 16);
     for (int i = 0; i < 2; i++)
@@ -60,5 +65,47 @@ int main()
     BytesToWords64((u8 *)ct, Ct, 16);
     SpeckDecrypt(Pt, Ct, rk);
     hex_print((u8 *)Pt, 0, 16);
+#endif
+
+#ifdef simon6496
+    //test vector
+    u8 pt[8] = {
+        0x63, 0x6c, 0x69, 0x6e, 0x67, 0x20, 0x72, 0x6f};
+    u8 k[12] = {0x00, 0x01, 0x02, 0x03, 0x08, 0x09, 0x0a, 0x0b, 0x10, 0x11, 0x12, 0x13};
+
+    u8 ct[8];
+    u32 K[3]; //3 * 32
+    u32 Pt[2];
+    u32 Ct[2];
+    u32 rk[42];
+
+    BytesToWords32((u8 *)pt, (u32 *)Pt, 8);
+    for (int i = 0; i < 2; i++)
+        printf("Pt[%d]: %2lx\n", i, Pt[i]);
+    printf("\n");
+
+    BytesToWords32(k, K, 12);
+    for (int i = 0; i < 3; i++)
+        printf("k[%d]: %2lx\n", i, K[i]);
+    printf("\n");
+
+    SimonKeySchedule(K, rk);
+    for (int i = 0; i < 42; i++)
+        printf("rk[%d]: %2lx\n", i, rk[i]);
+    printf("\n");
+
+    SimonEncrypt(Pt, Ct, rk);
+    for (int i = 0; i < 2; i++)
+        printf("Ct[%d]: %2lx\n", i, Ct[i]);
+    printf("\n");
+
+    Words32ToBytes(Ct, ct, 2);
+    hex_print((u8 *)ct, 0, 8);
+
+    //decrypt
+    BytesToWords32((u8 *)ct, Ct, 8);
+    SimonDecrypt(Pt, Ct, rk);
+    hex_print((u8 *)Pt, 0, 8);
+
 #endif
 }
