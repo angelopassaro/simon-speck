@@ -1,7 +1,8 @@
 #ifndef _SPECK128256_H
 #define _SPECK128256_H
 
-#include "utils.c"
+#include "../common/utils.c"
+
 /**
 * Generate round keys from given key
 * @param K cipher key

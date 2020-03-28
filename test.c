@@ -1,8 +1,8 @@
 #define speck128256
 #ifdef speck128256
-#include "speck128256.c"
+#include "speck/speck128256.c"
 #endif
-#include "speck.h"
+#include "speck/speck.h"
 #include <stdio.h>
 
 static void hex_print(uint8_t *pv, uint16_t s, uint16_t len)
