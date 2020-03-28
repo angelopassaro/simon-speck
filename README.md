@@ -16,6 +16,6 @@ This implementation is for testing purposes **ONLY**  and safety is not guarante
 - [ ] Speck 64/128
 - [ ] Speck 128/128
 - [ ] Speck 128/192
-- [ ] Speck 128/256
+- [X] Speck 128/256
 - [ ] CBC Mode
 - [ ] OFB Mode
