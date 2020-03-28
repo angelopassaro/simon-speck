@@ -7,7 +7,7 @@ This implementation is for testing purposes **ONLY**  and safety is not guarante
 
 
 ### TODO
-- [ ] Simon 64/96
+- [X] Simon 64/96
 - [ ] Simon 64/128
 - [ ] Simon 128/128
 - [ ] Simon 128/192
