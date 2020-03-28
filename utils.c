@@ -1,5 +1,4 @@
-#include "common.h"
-#include <stdint.h>
+#include "utils.h"
 
 void Words32ToBytes(u32 words[], u8 bytes[], int numwords)
 {
@@ -10,6 +9,16 @@ void Words32ToBytes(u32 words[], u8 bytes[], int numwords)
         bytes[j + 1] = (u8)(words[i] >> 8);
         bytes[j + 2] = (u8)(words[i] >> 16);
         bytes[j + 3] = (u8)(words[i] >> 24);
+        j += 4;
+    }
+}
+
+void BytesToWords32(u8 bytes[], u32 words[], int numbytes)
+{
+    int i, j = 0;
+    for (i = 0; i < numbytes / 4; i++)
+    {
+        words[i] = (u32)bytes[j] | ((u32)bytes[j + 1] << 8) | ((u32)bytes[j + 2] << 16) | ((u32)bytes[j + 3] << 24);
         j += 4;
     }
 }
@@ -30,16 +39,6 @@ void Words64ToBytes(u64 words[], u8 bytes[], int numwords)
         j += 8;
     }
 }
-void BytesToWords32(u8 bytes[], u32 words[], int numbytes)
-{
-    int i, j = 0;
-    for (i = 0; i < numbytes / 4; i++)
-    {
-        words[i] = (u32)bytes[j] | ((u32)bytes[j + 1] << 8) | ((u32)bytes[j + 2] << 16) | ((u32)bytes[j + 3] << 24);
-        j += 4;
-    }
-}
-
 void BytesToWords64(u8 bytes[], u64 words[], int numbytes)
 {
     int i, j = 0;
