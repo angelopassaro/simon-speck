@@ -1,8 +1,8 @@
 //#define SPECK6496
 //#define SPECK64128
 //#define SPECK128128
-#define SPECK128192
-//#define SPECK128256
+//#define SPECK128192
+#define SPECK128256
 //#define SIMON6496
 //#define SIMON64128
 //#define SIMON128128
@@ -43,7 +43,10 @@
 
 #ifdef SPECK128256
 #include "speck/speck128256.c"
-
+#define SPECK
+#define KEY_LEN 4
+#define KEY_ROUND 34
+#define S128
 #endif
 
 #ifdef SIMON6496
