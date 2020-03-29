@@ -1,9 +1,18 @@
+#define SPECK6496
 //#define SPECK128256
 //#define SIMON6496
 //#define SIMON64128
 //#define SIMON128128
 //#define SIMON128192
-#define SIMON128256
+//#define SIMON128256
+
+#ifdef SPECK6496
+#include "speck/speck6496.c"
+#define SPECK
+#define KEY_LEN 3
+#define KEY_ROUND 26
+#define S64
+#endif
 
 #ifdef SPECK128256
 #include "speck/speck128256.c"
@@ -67,6 +76,23 @@ static void hex_print(uint8_t *pv, uint16_t s, uint16_t len)
 
 int main()
 {
+
+/************************************************************************************************************************************************************
+ *                                                                  Simon
+ * *********************************************************************************************************************************************************/
+#ifdef SPECK
+#ifdef SPECK6496
+    //test vector
+    u8 pt[8] = {
+        0x65, 0x61, 0x6e, 0x73, 0x20, 0x46, 0x61, 0x74};
+    u8 k[12] = {0x00, 0x01, 0x02, 0x03, 0x08, 0x09, 0x0a, 0x0b, 0x10, 0x11, 0x12, 0x13};
+    u8 ct[8];
+    u32 K[KEY_LEN]; //3 * 32
+    u32 Pt[2];
+    u32 Ct[2];
+    u32 rk[KEY_ROUND];
+#endif
+
 #ifdef SPECK128256
     //test vector
     u8 pt[16] = {
@@ -78,34 +104,57 @@ int main()
     u64 Pt[2];
     u64 Ct[2];
     u64 rk[34];
+#endif
 
+#ifdef S64
+    BytesToWords32((u8 *)pt, (u32 *)Pt, 16);
+    for (int i = 0; i < 2; i++)
+        printf("Pt[%d]: %2ulx\n", i, Pt[i]);
+    printf("\n");
+
+    BytesToWords32(k, K, sizeof(k));
+    for (int i = 0; i < KEY_LEN; i++)
+        printf("k[%d]: %2ulx\n", i, K[i]);
+    printf("\n");
+#else
     BytesToWords64((u8 *)pt, (u64 *)Pt, 16);
     for (int i = 0; i < 2; i++)
-        printf("Pt[%d]: %2lx\n", i, Pt[i]);
+        printf("Pt[%d]: %2ulx\n", i, Pt[i]);
     printf("\n");
 
-    BytesToWords64((u8 *)k, K, 32);
-    for (int i = 0; i < 4; i++)
-        printf("k[%d]: %2lx\n", i, K[i]);
+    BytesToWords64(k, K, sizeof(k));
+    for (int i = 0; i < KEY_LEN; i++)
+        printf("k[%d]: %2ulx\n", i, K[i]);
     printf("\n");
+#endif
 
     SpeckKeySchedule(K, rk);
-    for (int i = 0; i < 34; i++)
-        printf("rk[%d]: %2lx\n", i, rk[i]);
+    for (int i = 0; i < KEY_ROUND; i++)
+        printf("rk[%d]: %2ulx\n", i, rk[i]);
     printf("\n");
 
     SpeckEncrypt(Pt, Ct, rk);
     for (int i = 0; i < 2; i++)
-        printf("Ct[%d]: %2lx\n", i, Ct[i]);
+        printf("Ct[%d]: %2ulx\n", i, Ct[i]);
     printf("\n");
 
+#ifdef S64
+    Words32ToBytes(Ct, ct, 2);
+    hex_print((u8 *)ct, 0, 8);
+
+    //decrypt
+    BytesToWords32((u8 *)ct, Ct, 8);
+    SpeckDecrypt(Pt, Ct, rk);
+    hex_print((u8 *)Pt, 0, 8);
+#else
     Words64ToBytes(Ct, ct, 2);
     hex_print((u8 *)ct, 0, 16);
 
-    //Decrypt
-    BytesToWords64((u8 *)ct, Ct, 16);
-    SpeckDecrypt(Pt, Ct, rk);
+    //decrypt
+    BytesToWords64((u8 *)ct, Ct, 8);
+    SimonDecrypt(Pt, Ct, rk);
     hex_print((u8 *)Pt, 0, 16);
+#endif
 #endif
 /************************************************************************************************************************************************************
  *                                                                  Simon
@@ -174,33 +223,33 @@ int main()
 #ifdef S64
     BytesToWords32((u8 *)pt, (u32 *)Pt, 16);
     for (int i = 0; i < 2; i++)
-        printf("Pt[%d]: %2lx\n", i, Pt[i]);
+        printf("Pt[%d]: %2ulx\n", i, Pt[i]);
     printf("\n");
 
     BytesToWords32(k, K, sizeof(k));
     for (int i = 0; i < KEY_LEN; i++)
-        printf("k[%d]: %2lx\n", i, K[i]);
+        printf("k[%d]: %2ulx\n", i, K[i]);
     printf("\n");
 #else
     BytesToWords64((u8 *)pt, (u64 *)Pt, 16);
     for (int i = 0; i < 2; i++)
-        printf("Pt[%d]: %2lx\n", i, Pt[i]);
+        printf("Pt[%d]: %2ulx\n", i, Pt[i]);
     printf("\n");
 
     BytesToWords64(k, K, sizeof(k));
     for (int i = 0; i < KEY_LEN; i++)
-        printf("k[%d]: %2lx\n", i, K[i]);
+        printf("k[%d]: %2ulx\n", i, K[i]);
     printf("\n");
 #endif
 
     SimonKeySchedule(K, rk);
     for (int i = 0; i < KEY_ROUND; i++)
-        printf("rk[%d]: %2lx\n", i, rk[i]);
+        printf("rk[%d]: %2ulx\n", i, rk[i]);
     printf("\n");
 
     SimonEncrypt(Pt, Ct, rk);
     for (int i = 0; i < 2; i++)
-        printf("Ct[%d]: %2lx\n", i, Ct[i]);
+        printf("Ct[%d]: %2ulx\n", i, Ct[i]);
     printf("\n");
 
 #ifdef S64
