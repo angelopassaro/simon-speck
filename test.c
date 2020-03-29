@@ -1,6 +1,7 @@
 //#define SPECK6496
 //#define SPECK64128
-#define SPECK128128
+//#define SPECK128128
+#define SPECK128192
 //#define SPECK128256
 //#define SIMON6496
 //#define SIMON64128
@@ -32,8 +33,17 @@
 #define S128
 #endif
 
+#ifdef SPECK128192
+#include "speck/speck128192.c"
+#define SPECK
+#define KEY_LEN 3
+#define KEY_ROUND 33
+#define S128
+#endif
+
 #ifdef SPECK128256
 #include "speck/speck128256.c"
+
 #endif
 
 #ifdef SIMON6496
@@ -130,6 +140,18 @@ int main()
     u8 k[16] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f};
     u8 ct[16];
     u64 K[KEY_LEN]; //2 * 64
+    u64 Pt[2];
+    u64 Ct[2];
+    u64 rk[KEY_ROUND];
+#endif
+
+#ifdef SPECK128192
+    //test vector
+    u8 pt[16] = {
+        0x65, 0x6e, 0x74, 0x20, 0x74, 0x6f, 0x20, 0x43, 0x68, 0x69, 0x65, 0x66, 0x20, 0x48, 0x61, 0x72};
+    u8 k[24] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17};
+    u8 ct[16];
+    u64 K[KEY_LEN]; //3 * 64
     u64 Pt[2];
     u64 Ct[2];
     u64 rk[KEY_ROUND];
