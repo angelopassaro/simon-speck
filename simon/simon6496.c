@@ -1,4 +1,4 @@
-#include "simon.h"
+#include "simon64.h"
 
 void SimonKeySchedule(u32 K[], u32 rk[])
 {
