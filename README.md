@@ -11,7 +11,7 @@ This implementation is for testing purposes **ONLY**  and safety is not guarante
 - [X] Simon 64/128
 - [X] Simon 128/128
 - [X] Simon 128/192
-- [ ] Simon 128/256
+- [X] Simon 128/256
 - [ ] Speck 64/96
 - [ ] Speck 64/128
 - [ ] Speck 128/128
