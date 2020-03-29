@@ -8,7 +8,7 @@ This implementation is for testing purposes **ONLY**  and safety is not guarante
 
 ### TODO
 - [X] Simon 64/96
-- [ ] Simon 64/128
+- [X] Simon 64/128
 - [ ] Simon 128/128
 - [ ] Simon 128/192
 - [ ] Simon 128/256
@@ -18,4 +18,4 @@ This implementation is for testing purposes **ONLY**  and safety is not guarante
 - [ ] Speck 128/192
 - [X] Speck 128/256
 - [ ] CBC Mode
-- [ ] OFB Mode
+- [ ] CTR Mode

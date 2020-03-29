@@ -1,14 +1,27 @@
-//#define speck128256
-#define simon6496
+//#define SPECK128256
+//#define SIMON6496
+#define SIMON64128
 
-#ifdef speck128256
+#ifdef SPECK128256
 #include "speck/speck128256.c"
 #endif
-#ifdef simon6496
+#ifdef SIMON6496
 #include "simon/simon6496.c"
+#define SIMON
+#define KEY_LEN 3
+#define KEY_ROUND 42
 #endif
-#include "speck/speck.h"
+
+#ifdef SIMON64128
+#include "simon/simon64128.c"
+#define SIMON
+#define KEY_LEN 4
+#define KEY_ROUND 44
+#endif
+
 #include <stdio.h>
+
+#include <stdint.h>
 
 static void hex_print(uint8_t *pv, uint16_t s, uint16_t len)
 {
@@ -26,7 +39,7 @@ static void hex_print(uint8_t *pv, uint16_t s, uint16_t len)
 
 int main()
 {
-#ifdef speck128256
+#ifdef SPECK128256
     //test vector
     u8 pt[16] = {
         0x70, 0x6f, 0x6f, 0x6e, 0x65, 0x72, 0x2e, 0x20, 0x49, 0x6e, 0x20, 0x74, 0x68, 0x6f, 0x73, 0x65};
@@ -66,31 +79,46 @@ int main()
     SpeckDecrypt(Pt, Ct, rk);
     hex_print((u8 *)Pt, 0, 16);
 #endif
-
-#ifdef simon6496
+/************************************************************************************************************************************************************
+ *                                                                  Simon
+ * *********************************************************************************************************************************************************/
+#ifdef SIMON
+#ifdef SIMON6496
     //test vector
     u8 pt[8] = {
         0x63, 0x6c, 0x69, 0x6e, 0x67, 0x20, 0x72, 0x6f};
     u8 k[12] = {0x00, 0x01, 0x02, 0x03, 0x08, 0x09, 0x0a, 0x0b, 0x10, 0x11, 0x12, 0x13};
 
     u8 ct[8];
-    u32 K[3]; //3 * 32
+    u32 K[KEY_LEN]; //3 * 32
     u32 Pt[2];
     u32 Ct[2];
-    u32 rk[42];
+    u32 rk[KEY_ROUND];
+#endif
+#ifdef SIMON64128
+    //test vector
+    u8 pt[8] = {
+        0x75, 0x6e, 0x64, 0x20, 0x6c, 0x69, 0x6b, 0x65};
+    u8 k[16] = {0x00, 0x01, 0x02, 0x03, 0x08, 0x09, 0x0a, 0x0b, 0x10, 0x11, 0x12, 0x13, 0x18, 0x19, 0x1a, 0x1b};
+    u8 ct[8];
+    u32 K[KEY_LEN]; //4 * 32
+    u32 Pt[2];
+    u32 Ct[2];
+    u32 rk[KEY_ROUND];
+#endif
 
-    BytesToWords32((u8 *)pt, (u32 *)Pt, 8);
+    BytesToWords32((u8 *)pt, (u32 *)Pt, sizeof(pt));
     for (int i = 0; i < 2; i++)
         printf("Pt[%d]: %2lx\n", i, Pt[i]);
     printf("\n");
 
-    BytesToWords32(k, K, 12);
-    for (int i = 0; i < 3; i++)
+    BytesToWords32(k, K, sizeof(k));
+    for (int i = 0; i < KEY_LEN; i++)
         printf("k[%d]: %2lx\n", i, K[i]);
     printf("\n");
 
     SimonKeySchedule(K, rk);
-    for (int i = 0; i < 42; i++)
+    for (int i = 0; i < KEY_ROUND; i++)
         printf("rk[%d]: %2lx\n", i, rk[i]);
     printf("\n");
 
@@ -106,6 +134,5 @@ int main()
     BytesToWords32((u8 *)ct, Ct, 8);
     SimonDecrypt(Pt, Ct, rk);
     hex_print((u8 *)Pt, 0, 8);
-
 #endif
 }
