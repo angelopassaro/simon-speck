@@ -1,5 +1,6 @@
 //#define SPECK6496
-#define SPECK64128
+//#define SPECK64128
+#define SPECK128128
 //#define SPECK128256
 //#define SIMON6496
 //#define SIMON64128
@@ -21,6 +22,14 @@
 #define KEY_LEN 4
 #define KEY_ROUND 27
 #define S64
+#endif
+
+#ifdef SPECK128128
+#include "speck/speck128128.c"
+#define SPECK
+#define KEY_LEN 2
+#define KEY_ROUND 32
+#define S128
 #endif
 
 #ifdef SPECK128256
@@ -114,6 +123,18 @@ int main()
     u32 rk[KEY_ROUND];
 #endif
 
+#ifdef SPECK128128
+    //test vector
+    u8 pt[16] = {
+        0x20, 0x6d, 0x61, 0x64, 0x65, 0x20, 0x69, 0x74, 0x20, 0x65, 0x71, 0x75, 0x69, 0x76, 0x61, 0x6c};
+    u8 k[16] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f};
+    u8 ct[16];
+    u64 K[KEY_LEN]; //2 * 64
+    u64 Pt[2];
+    u64 Ct[2];
+    u64 rk[KEY_ROUND];
+#endif
+
 #ifdef SPECK128256
     //test vector
     u8 pt[16] = {
@@ -173,7 +194,7 @@ int main()
 
     //decrypt
     BytesToWords64((u8 *)ct, Ct, 8);
-    SimonDecrypt(Pt, Ct, rk);
+    SpeckDecrypt(Pt, Ct, rk);
     hex_print((u8 *)Pt, 0, 16);
 #endif
 #endif
