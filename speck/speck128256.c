@@ -1,4 +1,4 @@
-#include "speck.h"
+#include "speck128.h"
 
 void SpeckKeySchedule(u64 K[], u64 rk[])
 {
