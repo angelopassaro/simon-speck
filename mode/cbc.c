@@ -60,8 +60,8 @@ void cbcEncrypt64(cypher cypher, u8 *iv, u8 *plaintext, u8 ciphertext[], u8 leng
     * 1. xor between iv and n bytes of plaintext
     * 2. split xored bytes 
     * 3. encrypt
-    * 4. copy block
-    * 5. update iv
+    * 4. update iv
+    * 5. copy block
     */
     for (int i = 0; i < blocks; i++)
     {
@@ -72,7 +72,7 @@ void cbcEncrypt64(cypher cypher, u8 *iv, u8 *plaintext, u8 ciphertext[], u8 leng
         u8 xored[cypher.blockSize];
         for (int c = 0; c < cypher.blockSize; c++)
         {
-            xored[c] = plaintext[(c) + (cypher.blockSize * i)]; //^ iv[c];
+            xored[c] = plaintext[(c) + (cypher.blockSize * i)] ^ iv[c];
         }
 
 #ifdef DEBUG

@@ -114,5 +114,5 @@ int main()
 
     cbcEncrypt64(*cypher, iv, pt, ct, sizeof(pt), rk);
 
-    //hex_print((u8 *)ct, 0, sizeof(pt));
+    hex_print((u8 *)ct, 0, sizeof(pt));
 }
