@@ -170,7 +170,7 @@ int main()
     u64 K[4]; // 4 * 64
     u64 Pt[2];
     u64 Ct[2];
-    u64 rk[34];
+    u64 rk[KEY_ROUND];
 #endif
 
 #ifdef S64
