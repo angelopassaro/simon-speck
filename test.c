@@ -1,8 +1,8 @@
-//#define SPECK6496
+#define SPECK6496
 //#define SPECK64128
 //#define SPECK128128
 //#define SPECK128192
-#define SPECK128256
+//#define SPECK128256
 //#define SIMON6496
 //#define SIMON64128
 //#define SIMON128128
@@ -174,7 +174,7 @@ int main()
 #endif
 
 #ifdef S64
-    BytesToWords32((u8 *)pt, (u32 *)Pt, 16);
+    BytesToWords32((u8 *)pt, (u32 *)Pt, sizeof(pt));
     for (int i = 0; i < 2; i++)
         printf("Pt[%d]: %2lx\n", i, Pt[i]);
     printf("\n");
@@ -184,7 +184,7 @@ int main()
         printf("k[%d]: %2lx\n", i, K[i]);
     printf("\n");
 #else
-    BytesToWords64((u8 *)pt, (u64 *)Pt, 16);
+    BytesToWords64((u8 *)pt, (u64 *)Pt, sizeof(pt));
     for (int i = 0; i < 2; i++)
         printf("Pt[%d]: %2lx\n", i, Pt[i]);
     printf("\n");
@@ -210,7 +210,7 @@ int main()
     hex_print((u8 *)ct, 0, 8);
 
     //decrypt
-    BytesToWords32((u8 *)ct, Ct, 8);
+    BytesToWords32((u8 *)ct, Ct, sizeof(ct));
     SpeckDecrypt(Pt, Ct, rk);
     hex_print((u8 *)Pt, 0, 8);
 #else
@@ -288,7 +288,7 @@ int main()
 #endif
 
 #ifdef S64
-    BytesToWords32((u8 *)pt, (u32 *)Pt, 16);
+    BytesToWords32((u8 *)pt, (u32 *)Pt, sizeof(pt));
     for (int i = 0; i < 2; i++)
         printf("Pt[%d]: %2lx\n", i, Pt[i]);
     printf("\n");
@@ -298,7 +298,7 @@ int main()
         printf("k[%d]: %2lx\n", i, K[i]);
     printf("\n");
 #else
-    BytesToWords64((u8 *)pt, (u64 *)Pt, 16);
+    BytesToWords64((u8 *)pt, (u64 *)Pt, sizeof(pt));
     for (int i = 0; i < 2; i++)
         printf("Pt[%d]: %2lx\n", i, Pt[i]);
     printf("\n");
@@ -324,7 +324,7 @@ int main()
     hex_print((u8 *)ct, 0, 8);
 
     //decrypt
-    BytesToWords32((u8 *)ct, Ct, 8);
+    BytesToWords32((u8 *)ct, Ct, sizeof(ct));
     SimonDecrypt(Pt, Ct, rk);
     hex_print((u8 *)Pt, 0, 8);
 #else
@@ -332,7 +332,7 @@ int main()
     hex_print((u8 *)ct, 0, 16);
 
     //decrypt
-    BytesToWords64((u8 *)ct, Ct, 8);
+    BytesToWords64((u8 *)ct, Ct, sizeof(ct));
     SimonDecrypt(Pt, Ct, rk);
     hex_print((u8 *)Pt, 0, 16);
 #endif
