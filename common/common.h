@@ -1,6 +1,8 @@
 #ifndef _COMMON_H
 #define _COMMON_H
 
+#include <stdint.h>
+
 #define u8 uint8_t
 #define u32 uint32_t
 #define u64 uint64_t
@@ -22,5 +24,16 @@
 
 #define ER64(x, y, s) (x = (ROTR64(x, 8) + y) ^ (s), y = ROTL64(y, 3) ^ x)
 #define DR64(x, y, k) (y ^= x, y = ROTR64(y, 3), x ^= k, x -= y, x = ROTL64(x, 8))
+
+/**
+ * Struct for cypher
+ */
+typedef struct
+{
+    void (*encrypt)(u32 Pt[], u32 Ct[], u32 rk[]);
+    void (*decrypt)(u32 Pt[], u32 Ct[], u32 rk[]);
+    u8 blockSize;
+
+} cypher;
 
 #endif
