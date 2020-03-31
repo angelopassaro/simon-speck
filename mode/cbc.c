@@ -39,7 +39,6 @@ void cbcEncrypt64(cypher64 cypher, u8 *iv, u8 *plaintext, u8 *ciphertext, u8 len
 #ifdef DEBUG
         printf("Error");
         printf("=====================================\n");
-
         return;
 #endif
     }
@@ -50,7 +49,6 @@ void cbcEncrypt64(cypher64 cypher, u8 *iv, u8 *plaintext, u8 *ciphertext, u8 len
 #ifdef DEBUG
     printf("Number of block: %d\n", blocks);
     printf("=====================================\n");
-
 #endif
     /**
     * For every block:
@@ -76,7 +74,6 @@ void cbcEncrypt64(cypher64 cypher, u8 *iv, u8 *plaintext, u8 *ciphertext, u8 len
         printf("xored \n");
         hex_print((u8 *)xored, 0, cypher.blockSize);
         printf("=====================================\n");
-
 #endif
 
         /**
@@ -120,7 +117,6 @@ void cbcDecrypt64(cypher64 cypher, u8 *iv, u8 *ciphertext, u8 *plaintext, u8 len
 #ifdef DEBUG
         printf("Error");
         printf("==================================\n");
-
         return;
 #endif
     }
@@ -131,7 +127,6 @@ void cbcDecrypt64(cypher64 cypher, u8 *iv, u8 *ciphertext, u8 *plaintext, u8 len
 #ifdef DEBUG
     printf("Number of block: %d\n", blocks);
     printf("==================================\n");
-
 #endif
     /**
     * For every block:
@@ -148,7 +143,6 @@ void cbcDecrypt64(cypher64 cypher, u8 *iv, u8 *ciphertext, u8 *plaintext, u8 len
         printf("cypher \n");
         hex_print(&ciphertext[i * cypher.blockSize], 0, cypher.blockSize);
         printf("==================================\n");
-
 #endif
 
         /**
@@ -177,7 +171,6 @@ void cbcDecrypt64(cypher64 cypher, u8 *iv, u8 *ciphertext, u8 *plaintext, u8 len
         printf("xored \n");
         hex_print((u8 *)iv, 0, cypher.blockSize);
         printf("==================================\n");
-
 #endif
 
         memcpy(&plaintext[i * cypher.blockSize], iv, cypher.blockSize);
@@ -205,7 +198,6 @@ void cbcEncrypt128(cypher128 cypher, u8 *iv, u8 *plaintext, u8 *ciphertext, u8 l
 #ifdef DEBUG
         printf("Error");
         printf("=====================================\n");
-
         return;
 #endif
     }
@@ -216,7 +208,6 @@ void cbcEncrypt128(cypher128 cypher, u8 *iv, u8 *plaintext, u8 *ciphertext, u8 l
 #ifdef DEBUG
     printf("Number of block: %d\n", blocks);
     printf("=====================================\n");
-
 #endif
     /**
     * For every block:
@@ -242,7 +233,6 @@ void cbcEncrypt128(cypher128 cypher, u8 *iv, u8 *plaintext, u8 *ciphertext, u8 l
         printf("xored \n");
         hex_print((u8 *)xored, 0, cypher.blockSize);
         printf("=====================================\n");
-
 #endif
 
         /**
@@ -286,7 +276,6 @@ void cbcDecrypt128(cypher128 cypher, u8 *iv, u8 *ciphertext, u8 *plaintext, u8 l
 #ifdef DEBUG
         printf("Error");
         printf("==================================\n");
-
         return;
 #endif
     }
@@ -297,7 +286,6 @@ void cbcDecrypt128(cypher128 cypher, u8 *iv, u8 *ciphertext, u8 *plaintext, u8 l
 #ifdef DEBUG
     printf("Number of block: %d\n", blocks);
     printf("==================================\n");
-
 #endif
     /**
     * For every block:
@@ -314,7 +302,6 @@ void cbcDecrypt128(cypher128 cypher, u8 *iv, u8 *ciphertext, u8 *plaintext, u8 l
         printf("cypher \n");
         hex_print(&ciphertext[i * cypher.blockSize], 0, cypher.blockSize);
         printf("==================================\n");
-
 #endif
 
         /**
@@ -331,6 +318,8 @@ void cbcDecrypt128(cypher128 cypher, u8 *iv, u8 *ciphertext, u8 *plaintext, u8 l
         cypher.decrypt(Pt, Ct, rk);
         Words64ToBytes(Pt, pt, 2);
 
+        printf("iv: ");
+        hex_print(iv, 0, 16);
         /**
          * STEP 4
          */
@@ -339,11 +328,17 @@ void cbcDecrypt128(cypher128 cypher, u8 *iv, u8 *ciphertext, u8 *plaintext, u8 l
             iv[c] ^= pt[c];
         }
 
+        printf("iv: ");
+        hex_print(iv, 0, 16);
+        printf("pt: ");
+        hex_print(pt, 0, 32);
+        printf("ct: ");
+        hex_print(ciphertext, 0, 32);
+
 #ifdef DEBUG
         printf("xored \n");
         hex_print((u8 *)iv, 0, cypher.blockSize);
         printf("==================================\n");
-
 #endif
 
         memcpy(&plaintext[i * cypher.blockSize], iv, cypher.blockSize);

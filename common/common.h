@@ -32,6 +32,7 @@ typedef struct
 {
     void (*encrypt)(u32 Pt[], u32 Ct[], u32 rk[]);
     void (*decrypt)(u32 Pt[], u32 Ct[], u32 rk[]);
+    void (*keySchedule)(u32 K[], u32 rk[]);
     u8 blockSize;
 
 } cypher64;
@@ -40,6 +41,7 @@ typedef struct
 {
     void (*encrypt)(u64 Pt[], u64 Ct[], u64 rk[]);
     void (*decrypt)(u64 Pt[], u64 Ct[], u64 rk[]);
+    void (*keySchedule)(u64 K[], u64 rk[]);
     u8 blockSize;
 
 } cypher128;

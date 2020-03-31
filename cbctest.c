@@ -1,4 +1,4 @@
-#define SPECK6496
+//#define SPECK6496
 //#define SPECK64128
 //#define SPECK128128
 //#define SPECK128192
@@ -6,7 +6,7 @@
 //#define SIMON6496
 //#define SIMON64128
 //#define SIMON128128
-//#define SIMON128192
+#define SIMON128192
 //#define SIMON128256
 
 #ifdef SPECK6496
@@ -129,16 +129,18 @@
 int main()
 {
 #ifdef S64
-    cypher64 *cypher = malloc(sizeof(cypher));
+    cypher64 *cypher = malloc(sizeof(cypher64));
     if (cypher != NULL)
     {
         cypher->blockSize = BLOCK_SIZE;
 #ifdef SPECK
         cypher->encrypt = &SpeckEncrypt;
         cypher->decrypt = &SpeckDecrypt;
+        cypher->keySchedule = &SpeckKeySchedule;
 #else
         cypher->encrypt = &SimonEncrypt;
         cypher->decrypt = &SimonDecrypt;
+        cypher->keySchedule = &SimonKeySchedule;
 #endif
     }
     else
@@ -157,17 +159,21 @@ int main()
     u32 K[KEY];
 
     BytesToWords32(k, K, KEY_LEN);
+    cypher->keySchedule = &SpeckKeySchedule;
+
 #else
-    cypher128 *cypher = malloc(sizeof(cypher));
+    cypher128 *cypher = malloc(sizeof(cypher128));
     if (cypher != NULL)
     {
         cypher->blockSize = BLOCK_SIZE;
 #ifdef SPECK
         cypher->encrypt = &SpeckEncrypt;
         cypher->decrypt = &SpeckDecrypt;
+        cypher->keySchedule = &SpeckKeySchedule;
 #else
         cypher->encrypt = &SimonEncrypt;
         cypher->decrypt = &SimonDecrypt;
+        cypher->keySchedule = &SimonKeySchedule;
 #endif
     }
     else
@@ -186,12 +192,7 @@ int main()
     u64 K[KEY];
 
     BytesToWords64(k, K, KEY_LEN);
-#endif
-
-#ifdef SPECK
-    SpeckKeySchedule(K, rk);
-#else
-    SimonKeySchedule(K, rk);
+    cypher->keySchedule(K, rk);
 #endif
 
 #ifdef S64
