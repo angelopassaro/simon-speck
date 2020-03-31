@@ -1,5 +1,7 @@
-#define SPECK6496
-
+//#define SPECK6496
+//#define SPECK64128
+//#define SIMON6496
+#define SIMON64128
 #ifdef SPECK6496
 #include "speck/speck6496.c"
 #define SPECK
@@ -13,14 +15,20 @@
 #ifdef SPECK64128
 #include "speck/speck64128.c"
 #define SPECK
-#define KEY_LEN 4
+#define BLOCK_SIZE 8 // 2 X 4 => 2 X 32 bits
+#define MEX_LEN 8
+#define KEY_LEN 16
+#define KEY 4
 #define KEY_ROUND 27
 #endif
 
 #ifdef SPECK128128
 #include "speck/speck128128.c"
 #define SPECK
-#define KEY_LEN 2
+#define BLOCK_SIZE 16 // 2 X 8 => 2 X 64 bits
+#define MEX_LEN 8
+#define KEY_LEN 16
+#define KEY 2
 #define KEY_ROUND 32
 #endif
 
@@ -41,14 +49,20 @@
 #ifdef SIMON6496
 #include "simon/simon6496.c"
 #define SIMON
-#define KEY_LEN 3
+#define BLOCK_SIZE 8 // 2 X 4 => 2 X 32 bits
+#define MEX_LEN 8
+#define KEY_LEN 12
+#define KEY 3
 #define KEY_ROUND 42
 #endif
 
 #ifdef SIMON64128
 #include "simon/simon64128.c"
 #define SIMON
-#define KEY_LEN 4
+#define BLOCK_SIZE 8 // 2 X 4 => 2 X 32 bits
+#define MEX_LEN 8
+#define KEY_LEN 16
+#define KEY 4
 #define KEY_ROUND 44
 #endif
 
@@ -104,13 +118,18 @@ int main()
     u8 pt[16] = {0x65, 0x61, 0x6e, 0x73, 0x20, 0x46, 0x61, 0x74, 0xeb, 0x7d, 0x4b, 0x75, 0xba, 0x00, 0x00, 0x02};
 
     u8 iv[MEX_LEN] = {0x00, 0x01, 0x02, 0x03, 0x08, 0x09, 0x0a, 0x0b};
-    u8 ct[sizeof(pt)];
 
+    u8 ct[sizeof(pt)];
     u32 rk[KEY_ROUND];
-    u32 K[KEY]; //3 * 32
+    u32 K[KEY];
 
     BytesToWords32(k, K, KEY_LEN);
+
+#ifdef SPECK
     SpeckKeySchedule(K, rk);
+#else
+    SimonKeySchedule(K, rk);
+#endif
 
     cbcEncrypt64(*cypher, iv, pt, ct, sizeof(pt), rk);
 
