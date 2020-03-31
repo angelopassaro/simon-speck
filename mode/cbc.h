@@ -12,7 +12,7 @@
 * @param length Length of data bytes to be encrypted
 * @param rk Round key
  */
-void cbcEncrypt64(cypher cypher, u8 *iv, u8 *plaintext, u8 ciphertext[], u8 lenght, u32 *rk);
+void cbcEncrypt64(cypher64 cypher, u8 *iv, u8 *plaintext, u8 ciphertext[], u8 lenght, u32 *rk);
 
 /**
 * Decryption in CBC mode
@@ -23,7 +23,7 @@ void cbcEncrypt64(cypher cypher, u8 *iv, u8 *plaintext, u8 ciphertext[], u8 leng
 * @param length Length of data bytes to be decrypted
 * @param rk Round key
  */
-void cbcDecrypt64(cypher cypher, u8 *iv, u8 *ciphertext, u8 *plaintext, u8 length, u32 *rk);
+void cbcDecrypt64(cypher64 cypher, u8 *iv, u8 *ciphertext, u8 *plaintext, u8 length, u32 *rk);
 
 /**
 * Encryption in CBC mode
@@ -34,7 +34,7 @@ void cbcDecrypt64(cypher cypher, u8 *iv, u8 *ciphertext, u8 *plaintext, u8 lengt
 * @param length Length of data bytes to be encrypted
 * @param rk Round key
  */
-void cbcEncrypt128(cypher cypher, u8 *iv, u8 *plaintext, u8 *ciphertext, u8 length, u64 rk);
+void cbcEncrypt128(cypher128 cypher, u8 *iv, u8 *plaintext, u8 *ciphertext, u8 length, u64 *rk);
 
 /**
 * Decryption in CBC mode
@@ -45,6 +45,6 @@ void cbcEncrypt128(cypher cypher, u8 *iv, u8 *plaintext, u8 *ciphertext, u8 leng
 * @param length Length of data bytes to be decrypted
 * @param rk Round key
  */
-void cbcDecrypt128(cypher cypher, u8 *iv, u8 *ciphertext, u8 *plaintext, u8 length, u64 rk);
+void cbcDecrypt128(cypher128 cypher, u8 *iv, u8 *ciphertext, u8 *plaintext, u8 length, u64 *rk);
 
 #endif

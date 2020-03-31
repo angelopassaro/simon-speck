@@ -17,5 +17,5 @@ This implementation is for testing purposes **ONLY**  and safety is not guarante
 - [X] Speck 128/128
 - [X] Speck 128/192
 - [X] Speck 128/256
-- [ ] CBC Mode
+- [X] CBC Mode (Simon 128/192 no work)
 - [ ] CTR Mode
