@@ -181,7 +181,6 @@ int main()
         printf("Some errors");
         return 1;
     }
-
     u8 k[KEY_LEN] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f};
     u8 pt[32] = {0x65, 0x61, 0x6e, 0x73, 0x20, 0x46, 0x61, 0x74, 0xeb, 0x7d, 0x4b, 0x75, 0xba, 0x00, 0x00, 0x02, 0x65, 0x61, 0x6e, 0x73, 0x20, 0x46, 0x61, 0x74, 0xeb, 0x7d, 0x4b, 0x75, 0xba, 0x00, 0x00, 0x02};
 
@@ -191,11 +190,11 @@ int main()
     u64 rk[KEY_ROUND];
     u64 K[KEY];
 
-    BytesToWords64(k, K, KEY_LEN);
-    cypher->keySchedule(K, rk);
+    BytesToWords64(k, K, sizeof(k));
 #endif
 
 #ifdef S64
+    cypher->keySchedule(K, rk);
     cbcEncrypt64(*cypher, iv, pt, ct, sizeof(pt), rk);
     hex_print((u8 *)ct, 0, sizeof(pt));
 
@@ -204,6 +203,8 @@ int main()
     cbcDecrypt64(*cypher, iv2, ct, plain, sizeof(ct), rk);
     hex_print((u8 *)plain, 0, sizeof(plain));
 #else
+    cypher->keySchedule(K, rk);
+
     cbcEncrypt128(*cypher, iv, pt, ct, sizeof(pt), rk);
     hex_print((u8 *)ct, 0, sizeof(pt));
 

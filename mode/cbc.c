@@ -328,13 +328,6 @@ void cbcDecrypt128(cypher128 cypher, u8 *iv, u8 *ciphertext, u8 *plaintext, u8 l
             iv[c] ^= pt[c];
         }
 
-        printf("iv: ");
-        hex_print(iv, 0, 16);
-        printf("pt: ");
-        hex_print(pt, 0, 32);
-        printf("ct: ");
-        hex_print(ciphertext, 0, 32);
-
 #ifdef DEBUG
         printf("xored \n");
         hex_print((u8 *)iv, 0, cypher.blockSize);
