@@ -115,4 +115,8 @@ int main()
     cbcEncrypt64(*cypher, iv, pt, ct, sizeof(pt), rk);
 
     hex_print((u8 *)ct, 0, sizeof(pt));
+    u8 plain[sizeof(ct)];
+    u8 iv2[MEX_LEN] = {0x00, 0x01, 0x02, 0x03, 0x08, 0x09, 0x0a, 0x0b};
+    cbcDecrypt64(*cypher, iv2, ct, plain, sizeof(ct), rk);
+    hex_print((u8 *)plain, 0, sizeof(plain));
 }
