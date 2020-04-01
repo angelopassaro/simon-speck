@@ -64,15 +64,14 @@ void cbcEncrypt64(cypher64 cypher, u8 *iv, u8 *plaintext, u8 *ciphertext, u8 len
         /**
          * STEP 1
          */
-        u8 xored[cypher.blockSize];
         for (int c = 0; c < cypher.blockSize; c++)
         {
-            xored[c] = plaintext[(c) + (cypher.blockSize * i)] ^ iv[c];
+            plaintext[(c) + (cypher.blockSize * i)] ^= iv[c];
         }
 
 #ifdef DEBUG
         printf("xored \n");
-        hex_print((u8 *)xored, 0, cypher.blockSize);
+        hex_print((u8 *)plaintext, i * cypher.blockSize, 16 + (i * cypher.blockSize));
         printf("=====================================\n");
 #endif
 
@@ -80,7 +79,7 @@ void cbcEncrypt64(cypher64 cypher, u8 *iv, u8 *plaintext, u8 *ciphertext, u8 len
          * STEP 2
          */
         u32 Pt[2];
-        BytesToWords32((u8 *)xored, Pt, cypher.blockSize);
+        BytesToWords32(&plaintext[i * cypher.blockSize], Pt, cypher.blockSize);
 
         /**
          * STEP 3
@@ -91,14 +90,14 @@ void cbcEncrypt64(cypher64 cypher, u8 *iv, u8 *plaintext, u8 *ciphertext, u8 len
         /**
          * STEP 4
          */
-        u8 ct[16];
-        Words32ToBytes(Ct, ct, 2);
-        memcpy(&iv[i * cypher.blockSize], ct, cypher.blockSize);
+        //u8 ct[16];
+        //Words32ToBytes(Ct, ct, 2);
+        memcpy(&iv[i * cypher.blockSize], Ct, cypher.blockSize);
 
         /**
          *  STEP 5
          */
-        memcpy(&ciphertext[i * cypher.blockSize], ct, cypher.blockSize);
+        memcpy(&ciphertext[i * cypher.blockSize], Ct, cypher.blockSize);
     }
 }
 
@@ -133,8 +132,8 @@ void cbcDecrypt64(cypher64 cypher, u8 *iv, u8 *ciphertext, u8 *plaintext, u8 len
     * 1. split ciphertext word
     * 2. decrypt
     * 3. xor between cypher and iv
-    * 4. update iv
-    * 5. copy block
+    * 4. copy block
+    * 5. update iv
     */
     for (int i = 0; i < blocks; i++)
     {
@@ -164,21 +163,21 @@ void cbcDecrypt64(cypher64 cypher, u8 *iv, u8 *ciphertext, u8 *plaintext, u8 len
          */
         for (int c = 0; c < cypher.blockSize; c++)
         {
-            iv[c] ^= pt[c];
+            pt[c] ^= iv[c];
         }
 
 #ifdef DEBUG
         printf("xored \n");
-        hex_print((u8 *)iv, 0, cypher.blockSize);
+        hex_print((u8 *)pt, i * cypher.blockSize, 16 + (i * cypher.blockSize));
         printf("==================================\n");
 #endif
 
-        memcpy(&plaintext[i * cypher.blockSize], iv, cypher.blockSize);
+        memcpy(&plaintext[i * cypher.blockSize], pt, cypher.blockSize);
 
         /**
          * STEP 5
          */
-        memcpy(&iv[i * cypher.blockSize], Ct, cypher.blockSize);
+        memcpy(iv, &ciphertext[i * cypher.blockSize], cypher.blockSize);
     }
 }
 
@@ -223,15 +222,14 @@ void cbcEncrypt128(cypher128 cypher, u8 *iv, u8 *plaintext, u8 *ciphertext, u8 l
         /**
          * STEP 1
          */
-        u8 xored[cypher.blockSize];
         for (int c = 0; c < cypher.blockSize; c++)
         {
-            xored[c] = plaintext[(c) + (cypher.blockSize * i)] ^ iv[c];
+            plaintext[(c) + (cypher.blockSize * i)] ^= iv[c];
         }
 
 #ifdef DEBUG
         printf("xored \n");
-        hex_print((u8 *)xored, 0, cypher.blockSize);
+        hex_print((u8 *)plaintext, i * cypher.blockSize, 16 + (i * cypher.blockSize));
         printf("=====================================\n");
 #endif
 
@@ -239,7 +237,7 @@ void cbcEncrypt128(cypher128 cypher, u8 *iv, u8 *plaintext, u8 *ciphertext, u8 l
          * STEP 2
          */
         u64 Pt[2];
-        BytesToWords64((u8 *)xored, Pt, cypher.blockSize);
+        BytesToWords64(&plaintext[i * cypher.blockSize], Pt, cypher.blockSize);
 
         /**
          * STEP 3
@@ -250,14 +248,14 @@ void cbcEncrypt128(cypher128 cypher, u8 *iv, u8 *plaintext, u8 *ciphertext, u8 l
         /**
          * STEP 4
          */
-        u8 ct[16];
-        Words64ToBytes(Ct, ct, 2);
-        memcpy(&iv[i * cypher.blockSize], ct, cypher.blockSize);
+        //u8 ct[16];
+        //Words32ToBytes(Ct, ct, 2);
+        memcpy(&iv[i * cypher.blockSize], Ct, cypher.blockSize);
 
         /**
          *  STEP 5
          */
-        memcpy(&ciphertext[i * cypher.blockSize], ct, cypher.blockSize);
+        memcpy(&ciphertext[i * cypher.blockSize], Ct, cypher.blockSize);
     }
 }
 
@@ -292,8 +290,8 @@ void cbcDecrypt128(cypher128 cypher, u8 *iv, u8 *ciphertext, u8 *plaintext, u8 l
     * 1. split ciphertext word
     * 2. decrypt
     * 3. xor between cypher and iv
-    * 4. update iv
-    * 5. copy block
+    * 4. copy block
+    * 5. update iv
     */
     for (int i = 0; i < blocks; i++)
     {
@@ -318,27 +316,25 @@ void cbcDecrypt128(cypher128 cypher, u8 *iv, u8 *ciphertext, u8 *plaintext, u8 l
         cypher.decrypt(Pt, Ct, rk);
         Words64ToBytes(Pt, pt, 2);
 
-        printf("iv: ");
-        hex_print(iv, 0, 16);
         /**
          * STEP 4
          */
         for (int c = 0; c < cypher.blockSize; c++)
         {
-            iv[c] ^= pt[c];
+            pt[c] ^= iv[c];
         }
 
 #ifdef DEBUG
         printf("xored \n");
-        hex_print((u8 *)iv, 0, cypher.blockSize);
+        hex_print((u8 *)pt, i * cypher.blockSize, 16 + (i * cypher.blockSize));
         printf("==================================\n");
 #endif
 
-        memcpy(&plaintext[i * cypher.blockSize], iv, cypher.blockSize);
+        memcpy(&plaintext[i * cypher.blockSize], pt, cypher.blockSize);
 
         /**
          * STEP 5
          */
-        memcpy(&iv[i * cypher.blockSize], Ct, cypher.blockSize);
+        memcpy(iv, &ciphertext[i * cypher.blockSize], cypher.blockSize);
     }
 }
