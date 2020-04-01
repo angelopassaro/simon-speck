@@ -5,8 +5,8 @@
 //#define SPECK128256
 //#define SIMON6496
 //#define SIMON64128
-#define SIMON128128
-//#define SIMON128192
+//#define SIMON128128
+#define SIMON128192
 //#define SIMON128256
 
 #ifdef SPECK6496

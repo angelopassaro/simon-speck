@@ -48,6 +48,6 @@ void SimonDecrypt(u64 Pt[], u64 Ct[], u64 rk[])
     t = Pt[0];
     Pt[0] = Pt[1] ^ f64(Pt[0]) ^ rk[68];
     Pt[1] = t;
-    for (i = 67; i >= 0; i--)
+    for (i = 67; i >= 0; i -= 2)
         R64x2(Pt[0], Pt[1], rk[i], rk[i - 1]);
 }
