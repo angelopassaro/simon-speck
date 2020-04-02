@@ -4,7 +4,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-#define DEBUG
+//#define DEBUG
 #ifdef DEBUG
 #include <stdio.h>
 
@@ -40,7 +40,6 @@ int cbcEncrypt64(cypher64 cypher, u8 *iv, u8 *plaintext, u8 *ciphertext, u8 leng
 
     //PKcS#7 padding
     int pad = padding(cypher.blockSize, length);
-    printf("Pad: %d\n", pad);
     u8 plaintextPadded[length + pad];
     memcpy(plaintextPadded, plaintext, length);
     for (int i = length; i < length + pad; i++)
@@ -110,7 +109,6 @@ int cbcEncrypt64(cypher64 cypher, u8 *iv, u8 *plaintext, u8 *ciphertext, u8 leng
         //u8 ct[16];
         //Words32ToBytes(Ct, ct, 2);
         memcpy(iv, (u8 *)Ct, cypher.blockSize);
-        hex_print((u8 *)iv, 0, cypher.blockSize);
 
         /**
          *  STEP 5
@@ -208,7 +206,6 @@ int cbcEncrypt128(cypher128 cypher, u8 *iv, u8 *plaintext, u8 *ciphertext, u8 le
 
     //PKcS#7 padding
     int pad = padding(cypher.blockSize, length);
-    printf("Pad: %d\n", pad);
     u8 plaintextPadded[length + pad];
     memcpy(plaintextPadded, plaintext, length);
     for (int i = length; i < length + pad; i++)
@@ -276,7 +273,6 @@ int cbcEncrypt128(cypher128 cypher, u8 *iv, u8 *plaintext, u8 *ciphertext, u8 le
          * STEP 4
          */
         memcpy(iv, (u8 *)Ct, cypher.blockSize);
-        hex_print((u8 *)iv, 0, cypher.blockSize);
 
         /**
          *  STEP 5
