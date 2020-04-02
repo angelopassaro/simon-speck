@@ -4,7 +4,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-//#define DEBUG
+#define DEBUG
 #ifdef DEBUG
 #include <stdio.h>
 
