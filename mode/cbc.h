@@ -13,7 +13,7 @@
 * @param rk Round key
 * @return The number of pad
  */
-int cbcEncrypt64(cypher64 cypher, u8 *iv, u8 *plaintext, u8 *ciphertext, u8 length, u32 *rk);
+void cbcEncrypt64(cypher64 cypher, u8 *iv, u8 *plaintext, u8 *ciphertext, u8 length, u32 *rk);
 
 /**
 * Decryption in CBC mode
@@ -37,7 +37,7 @@ int cbcDecrypt64(cypher64 cypher, u8 *iv, u8 *ciphertext, u8 *plaintext, u8 leng
 * @param rk Round key
 * @return The number of pad
  */
-int cbcEncrypt128(cypher128 cypher, u8 *iv, u8 *plaintext, u8 *ciphertext, u8 length, u64 *rk);
+void cbcEncrypt128(cypher128 cypher, u8 *iv, u8 *plaintext, u8 *ciphertext, u8 length, u64 *rk);
 
 /**
 * Decryption in CBC mode

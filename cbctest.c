@@ -1,6 +1,6 @@
-//#define SPECK6496
+#define SPECK6496
 //#define SPECK64128
-#define SPECK128128
+//#define SPECK128128
 //#define SPECK128192
 //#define SPECK128256
 //#define SIMON6496
@@ -196,12 +196,10 @@ int main()
 #ifdef S64
     cypher->keySchedule(K, rk);
 
-    u8 ctt[sizeof(pt)];
-
     ///////////////////////PKCS#7 padding///////////////////////
-    int pad = cbcEncrypt64(*cypher, iv, pt, ctt, sizeof(pt), rk);
+    int pad = padding(cypher->blockSize, sizeof(pt));
     u8 ct[sizeof(pt) + pad];
-    memcpy(ct, ctt, sizeof(ct));
+    cbcEncrypt64(*cypher, iv, pt, ct, sizeof(pt), rk);
     /////////////////////////////////////////////////////////////
 
     hex_print(ct, 0, sizeof(ct));

@@ -28,7 +28,8 @@ int padding(int blockSize, u8 length)
     return (length % blockSize == 0) ? blockSize : blockSize - (length % blockSize);
 }
 
-int cbcEncrypt64(cypher64 cypher, u8 *iv, u8 *plaintext, u8 *ciphertext, u8 length, u32 *rk)
+//TODO improve pad
+void cbcEncrypt64(cypher64 cypher, u8 *iv, u8 *plaintext, u8 *ciphertext, u8 length, u32 *rk)
 {
 
 #ifdef DEBUG
@@ -115,8 +116,6 @@ int cbcEncrypt64(cypher64 cypher, u8 *iv, u8 *plaintext, u8 *ciphertext, u8 leng
          */
         memcpy(&ciphertext[i * cypher.blockSize], Ct, cypher.blockSize);
     }
-
-    return pad;
 }
 
 int cbcDecrypt64(cypher64 cypher, u8 *iv, u8 *ciphertext, u8 *plaintext, u8 length, u32 *rk)
@@ -194,7 +193,7 @@ int cbcDecrypt64(cypher64 cypher, u8 *iv, u8 *ciphertext, u8 *plaintext, u8 leng
     return length - plaintext[length - 1];
 }
 
-int cbcEncrypt128(cypher128 cypher, u8 *iv, u8 *plaintext, u8 *ciphertext, u8 length, u64 *rk)
+void cbcEncrypt128(cypher128 cypher, u8 *iv, u8 *plaintext, u8 *ciphertext, u8 length, u64 *rk)
 {
 
 #ifdef DEBUG
@@ -279,7 +278,6 @@ int cbcEncrypt128(cypher128 cypher, u8 *iv, u8 *plaintext, u8 *ciphertext, u8 le
          */
         memcpy(&ciphertext[i * cypher.blockSize], Ct, cypher.blockSize);
     }
-    return pad;
 }
 
 int cbcDecrypt128(cypher128 cypher, u8 *iv, u8 *ciphertext, u8 *plaintext, u8 length, u64 *rk)
