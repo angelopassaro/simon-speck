@@ -162,7 +162,7 @@ int cbcDecrypt64(cypher64 cypher, u8 *iv, u8 *ciphertext, u8 *plaintext, u8 leng
          * STEP 2
          */
         u32 Pt[2];
-        u8 pt[16];
+        u8 pt[8];
         cypher.decrypt(Pt, Ct, rk);
         Words32ToBytes(Pt, pt, 2);
 
