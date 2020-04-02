@@ -1,12 +1,12 @@
 //#define SPECK6496
 //#define SPECK64128
-//#define SPECK128128
+#define SPECK128128
 //#define SPECK128192
 //#define SPECK128256
 //#define SIMON6496
 //#define SIMON64128
 //#define SIMON128128
-#define SIMON128192
+//#define SIMON128192
 //#define SIMON128256
 
 #ifdef SPECK6496
@@ -148,13 +148,14 @@ int main()
         printf("Some errors");
         return 1;
     }
+    u8 pt[] = {0x65, 0x61, 0x6e, 0x73, 0x20, 0x46, 0x61, 0x74,
+               0xeb, 0x7d, 0x4b, 0x75, 0xba, 0x00, 0x00, 0x02,
+               0x65, 0x61, 0x6e, 0x73, 0x20, 0x46, 0x61, 0x74,
+               0xeb, 0x7d, 0x4b, 0x75, 0xba, 0x00, 0x00, 0x02,
+               0xff, 0xfd};
 
     u8 k[KEY_LEN] = {0x00, 0x01, 0x02, 0x03, 0x08, 0x09, 0x0a, 0x0b, 0x10, 0x11, 0x12, 0x13};
-    u8 pt[16] = {0x65, 0x61, 0x6e, 0x73, 0x20, 0x46, 0x61, 0x74, 0xeb, 0x7d, 0x4b, 0x75, 0xba, 0x00, 0x00, 0x02};
-
     u8 iv[MEX_LEN] = {0x00, 0x01, 0x02, 0x03, 0x08, 0x09, 0x0a, 0x0b};
-
-    u8 ct[sizeof(pt)];
     u32 rk[KEY_ROUND];
     u32 K[KEY];
 
@@ -181,11 +182,10 @@ int main()
         return 1;
     }
     u8 k[KEY_LEN] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f};
-    u8 pt[32] = {0x65, 0x61, 0x6e, 0x73, 0x20, 0x46, 0x61, 0x74, 0xeb, 0x7d, 0x4b, 0x75, 0xba, 0x00, 0x00, 0x02,
-                 0x78, 0x61, 0x6e, 0x73, 0x20, 0x46, 0x61, 0x74, 0xeb, 0x7d, 0x4b, 0x75, 0xba, 0x05, 0x05, 0x05};
+    u8 pt[] = {0x65, 0x61, 0x6e, 0x73, 0x20, 0x46, 0x61, 0x74, 0xeb, 0x7d, 0x4b, 0x75, 0xba, 0x00, 0x00, 0x02,
+               0x78, 0x61, 0x6e, 0x73, 0x20, 0x46, 0x61, 0x74, 0xeb, 0x7d, 0x4b, 0x75, 0xba, 0x05, 0x05, 0x05, 0x03};
     u8 iv[MEX_LEN] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f};
 
-    u8 ct[sizeof(pt)];
     u64 rk[KEY_ROUND];
     u64 K[KEY];
 
@@ -195,22 +195,52 @@ int main()
 
 #ifdef S64
     cypher->keySchedule(K, rk);
-    cbcEncrypt64(*cypher, iv, pt, ct, sizeof(pt), rk);
-    hex_print((u8 *)ct, 0, sizeof(pt));
 
-    u8 plain[sizeof(ct)];
+    u8 ctt[sizeof(pt)];
+
+    ///////////////////////PKCS#7 padding///////////////////////
+    int pad = cbcEncrypt64(*cypher, iv, pt, ctt, sizeof(pt), rk);
+    u8 ct[sizeof(pt) + pad];
+    memcpy(ct, ctt, sizeof(ct));
+    /////////////////////////////////////////////////////////////
+
+    hex_print(ct, 0, sizeof(ct));
+
+    u8 plaintext[sizeof(ct) + 8];
+
     u8 iv2[MEX_LEN] = {0x00, 0x01, 0x02, 0x03, 0x08, 0x09, 0x0a, 0x0b};
-    cbcDecrypt64(*cypher, iv2, ct, plain, sizeof(ct), rk);
-    hex_print((u8 *)plain, 0, sizeof(plain));
+
+    /////////////////////////PKCS#7////////////////////////////
+    int size = cbcDecrypt64(*cypher, iv2, ct, plaintext, sizeof(ct), rk);
+
+    u8 result[size];
+    memcpy(result, plaintext, size);
+    /////////////////////////////////////////////////////////
+    hex_print((u8 *)result, 0, size);
+
 #else
     cypher->keySchedule(K, rk);
 
-    cbcEncrypt128(*cypher, iv, pt, ct, sizeof(pt), rk);
-    hex_print((u8 *)ct, 0, sizeof(pt));
+    u8 ctt[sizeof(pt) + 16];
+    ///////////////////////PKCS#7 padding///////////////////////
+    int pad = cbcEncrypt128(*cypher, iv, pt, ctt, sizeof(pt), rk);
+    u8 ct[sizeof(pt) + pad];
+    memcpy(ct, ctt, sizeof(ct));
+    /////////////////////////////////////////////////////////////
 
-    u8 plain[sizeof(ct)];
+    hex_print(ct, 0, sizeof(ct));
+
+    u8 plaintext[sizeof(ct)];
+
     u8 iv2[MEX_LEN] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f};
-    cbcDecrypt128(*cypher, iv2, ct, plain, sizeof(ct), rk);
-    hex_print((u8 *)plain, 0, sizeof(plain));
+    /////////////////////////PKCS#7////////////////////////////
+    int size = cbcDecrypt128(*cypher, iv2, ct, plaintext, sizeof(ct), rk);
+
+    u8 result[size];
+    memcpy(result, plaintext, size);
+    /////////////////////////////////////////////////////////
+    hex_print(result, 0, size);
+
 #endif
+    free(cypher);
 }

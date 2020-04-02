@@ -2,6 +2,7 @@
 #include "../common/utils.h"
 
 #include <string.h>
+#include <stdlib.h>
 
 #define DEBUG
 #ifdef DEBUG
@@ -27,7 +28,7 @@ int padding(int blockSize, u8 length)
     return (length % blockSize == 0) ? blockSize : blockSize - (length % blockSize);
 }
 
-void cbcEncrypt64(cypher64 cypher, u8 *iv, u8 *plaintext, u8 *ciphertext, u8 length, u32 *rk)
+int cbcEncrypt64(cypher64 cypher, u8 *iv, u8 *plaintext, u8 *ciphertext, u8 length, u32 *rk)
 {
 
 #ifdef DEBUG
@@ -37,8 +38,18 @@ void cbcEncrypt64(cypher64 cypher, u8 *iv, u8 *plaintext, u8 *ciphertext, u8 len
     printf("=====================================\n");
 #endif
 
+    //PKcS#7 padding
+    int pad = padding(cypher.blockSize, length);
+    printf("Pad: %d\n", pad);
+    u8 plaintextPadded[length + pad];
+    memcpy(plaintextPadded, plaintext, length);
+    for (int i = length; i < length + pad; i++)
+    {
+        plaintextPadded[i] = pad;
+    }
+
     //compute the number of block
-    int blocks = length / cypher.blockSize;
+    int blocks = sizeof(plaintextPadded) / cypher.blockSize;
 
 #ifdef DEBUG
     printf("Number of block: %d\n", blocks);
@@ -57,7 +68,7 @@ void cbcEncrypt64(cypher64 cypher, u8 *iv, u8 *plaintext, u8 *ciphertext, u8 len
 #ifdef DEBUG
         printf("Block: %d\n", i);
         printf("plain: ");
-        hex_print((u8 *)plaintext, i * cypher.blockSize, cypher.blockSize + (i * cypher.blockSize));
+        hex_print((u8 *)plaintextPadded, i * cypher.blockSize, cypher.blockSize + (i * cypher.blockSize));
 #endif
         /**
          * STEP 1
@@ -65,21 +76,21 @@ void cbcEncrypt64(cypher64 cypher, u8 *iv, u8 *plaintext, u8 *ciphertext, u8 len
         for (int c = 0; c < cypher.blockSize; c++)
         {
             //  printf("%x\n", iv[c]);
-            plaintext[(c) + (cypher.blockSize * i)] ^= iv[c];
+            plaintextPadded[(c) + (cypher.blockSize * i)] ^= iv[c];
         }
 
 #ifdef DEBUG
         printf("iv: ");
         hex_print(iv, 0, cypher.blockSize);
         printf("Xored: ");
-        hex_print((u8 *)plaintext, i * cypher.blockSize, cypher.blockSize + (i * cypher.blockSize));
+        hex_print((u8 *)plaintextPadded, i * cypher.blockSize, cypher.blockSize + (i * cypher.blockSize));
 #endif
 
         /**
          * STEP 2
          */
         u32 Pt[2];
-        BytesToWords32(&plaintext[i * cypher.blockSize], Pt, cypher.blockSize);
+        BytesToWords32(&plaintextPadded[i * cypher.blockSize], Pt, cypher.blockSize);
 
         /**
          * STEP 3
@@ -106,9 +117,11 @@ void cbcEncrypt64(cypher64 cypher, u8 *iv, u8 *plaintext, u8 *ciphertext, u8 len
          */
         memcpy(&ciphertext[i * cypher.blockSize], Ct, cypher.blockSize);
     }
+
+    return pad;
 }
 
-void cbcDecrypt64(cypher64 cypher, u8 *iv, u8 *ciphertext, u8 *plaintext, u8 length, u32 *rk)
+int cbcDecrypt64(cypher64 cypher, u8 *iv, u8 *ciphertext, u8 *plaintext, u8 length, u32 *rk)
 {
 #ifdef DEBUG
     printf("======START DEBUG DECRYPT:========\n");
@@ -178,9 +191,12 @@ void cbcDecrypt64(cypher64 cypher, u8 *iv, u8 *ciphertext, u8 *plaintext, u8 len
         printf("==================================\n");
 #endif
     }
+
+    //return size of plaintext without pad
+    return length - plaintext[length - 1];
 }
 
-void cbcEncrypt128(cypher128 cypher, u8 *iv, u8 *plaintext, u8 *ciphertext, u8 length, u64 *rk)
+int cbcEncrypt128(cypher128 cypher, u8 *iv, u8 *plaintext, u8 *ciphertext, u8 length, u64 *rk)
 {
 
 #ifdef DEBUG
@@ -190,8 +206,18 @@ void cbcEncrypt128(cypher128 cypher, u8 *iv, u8 *plaintext, u8 *ciphertext, u8 l
     printf("=====================================\n");
 #endif
 
+    //PKcS#7 padding
+    int pad = padding(cypher.blockSize, length);
+    printf("Pad: %d\n", pad);
+    u8 plaintextPadded[length + pad];
+    memcpy(plaintextPadded, plaintext, length);
+    for (int i = length; i < length + pad; i++)
+    {
+        plaintextPadded[i] = pad;
+    }
+
     //compute the number of block
-    int blocks = length / cypher.blockSize;
+    int blocks = sizeof(plaintextPadded) / cypher.blockSize;
 
 #ifdef DEBUG
     printf("Number of block: %d\n", blocks);
@@ -210,7 +236,7 @@ void cbcEncrypt128(cypher128 cypher, u8 *iv, u8 *plaintext, u8 *ciphertext, u8 l
 #ifdef DEBUG
         printf("Block: %d\n", i);
         printf("plain: ");
-        hex_print((u8 *)plaintext, i * cypher.blockSize, cypher.blockSize + (i * cypher.blockSize));
+        hex_print((u8 *)plaintextPadded, i * cypher.blockSize, cypher.blockSize + (i * cypher.blockSize));
 #endif
         /**
          * STEP 1
@@ -218,21 +244,21 @@ void cbcEncrypt128(cypher128 cypher, u8 *iv, u8 *plaintext, u8 *ciphertext, u8 l
         for (int c = 0; c < cypher.blockSize; c++)
         {
             //  printf("%x\n", iv[c]);
-            plaintext[(c) + (cypher.blockSize * i)] ^= iv[c];
+            plaintextPadded[(c) + (cypher.blockSize * i)] ^= iv[c];
         }
 
 #ifdef DEBUG
         printf("iv: ");
         hex_print(iv, 0, cypher.blockSize);
         printf("Xored: ");
-        hex_print((u8 *)plaintext, i * cypher.blockSize, cypher.blockSize + (i * cypher.blockSize));
+        hex_print((u8 *)plaintextPadded, i * cypher.blockSize, cypher.blockSize + (i * cypher.blockSize));
 #endif
 
         /**
          * STEP 2
          */
         u64 Pt[2];
-        BytesToWords64(&plaintext[i * cypher.blockSize], Pt, cypher.blockSize);
+        BytesToWords64(&plaintextPadded[i * cypher.blockSize], Pt, cypher.blockSize);
 
         /**
          * STEP 3
@@ -249,8 +275,6 @@ void cbcEncrypt128(cypher128 cypher, u8 *iv, u8 *plaintext, u8 *ciphertext, u8 l
         /**
          * STEP 4
          */
-        //u8 ct[16];
-        //Words32ToBytes(Ct, ct, 2);
         memcpy(iv, (u8 *)Ct, cypher.blockSize);
         hex_print((u8 *)iv, 0, cypher.blockSize);
 
@@ -259,9 +283,10 @@ void cbcEncrypt128(cypher128 cypher, u8 *iv, u8 *plaintext, u8 *ciphertext, u8 l
          */
         memcpy(&ciphertext[i * cypher.blockSize], Ct, cypher.blockSize);
     }
+    return pad;
 }
 
-void cbcDecrypt128(cypher128 cypher, u8 *iv, u8 *ciphertext, u8 *plaintext, u8 length, u64 *rk)
+int cbcDecrypt128(cypher128 cypher, u8 *iv, u8 *ciphertext, u8 *plaintext, u8 length, u64 *rk)
 {
 #ifdef DEBUG
     printf("======START DEBUG DECRYPT:========\n");
@@ -331,4 +356,7 @@ void cbcDecrypt128(cypher128 cypher, u8 *iv, u8 *ciphertext, u8 *plaintext, u8 l
         printf("==================================\n");
 #endif
     }
+
+    //return size of plaintext without pad
+    return length - plaintext[length - 1];
 }
