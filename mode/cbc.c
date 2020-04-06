@@ -7,20 +7,6 @@
 #define DEBUG
 #ifdef DEBUG
 #include <stdio.h>
-
-static void hex_print(uint8_t *pv, uint16_t s, uint16_t len)
-{
-    uint8_t *p = pv;
-    if (NULL == pv)
-        printf("NULL");
-    else
-    {
-        unsigned int i;
-        for (i = s; i < len; ++i)
-            printf("%02x ", p[i]);
-    }
-    printf("\n\n");
-}
 #endif
 
 int padding(int blockSize, u8 length)

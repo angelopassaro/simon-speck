@@ -3,6 +3,7 @@
 
 #include "common.h"
 #include <stdint.h>
+#include <stdio.h>
 
 /**
 * Convert  give words in bytes
@@ -89,5 +90,19 @@ void BytesToWords64(u8 bytes[], u64 words[], int numbytes)
                    ((u64)bytes[j + 6] << 48) | ((u64)bytes[j + 7] << 56);
         j += 8;
     }
+}
+
+static void hex_print(uint8_t *pv, uint16_t s, uint16_t len)
+{
+    uint8_t *p = pv;
+    if (NULL == pv)
+        printf("NULL");
+    else
+    {
+        unsigned int i;
+        for (i = s; i < len; ++i)
+            printf("%02x ", p[i]);
+    }
+    printf("\n\n");
 }
 #endif
