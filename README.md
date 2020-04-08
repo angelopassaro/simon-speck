@@ -1,6 +1,6 @@
 # Implementations of Simon and Speck lightweight cipher
 
-The implementations follow the [implementatoon guide](https://nsacyber.github.io/simon-speck/implementations/ImplementationGuide1.1.pdf).
+The implementations follow the [implementation guide](https://nsacyber.github.io/simon-speck/implementations/ImplementationGuide1.1.pdf).
 
 # Disclaimer
 This implementation is for testing purposes **ONLY**  and safety is not guaranteed
@@ -18,4 +18,4 @@ This implementation is for testing purposes **ONLY**  and safety is not guarante
 - [X] Speck 128/192
 - [X] Speck 128/256
 - [X] CBC Mode
-- [ ] CTR Mode
+- [X] CTR Mode
