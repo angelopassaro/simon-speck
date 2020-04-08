@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-//#define DEBUG
+#define DEBUG
 
 void xor (u8 * in, u8 *out, int length) {
     for (int i = 0; i < length; i++)
@@ -12,9 +12,9 @@ void xor (u8 * in, u8 *out, int length) {
     }
 }
 
-    void byteAdd(u8 *dst, int dstLength)
+    void byteAdd(u8 *dst, int dstLength, u8 *count)
 {
-    u8 count[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01};
+    // u8 count[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01};
     int carry = 0;
 
     for (int i = 0; i < dstLength; i++)
@@ -104,8 +104,10 @@ void ctrEncrypt64(cypher64 cypher, u8 *nonce, u8 *plaintext, u8 length, u32 *rk)
             printf("===================================================\n");
 
 #endif
+            u8 count[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01};
+
             //STEP 4
-            byteAdd(counter, cypher.blockSize);
+            byteAdd(counter, cypher.blockSize, count);
         }
 
         //last block
@@ -198,8 +200,9 @@ void ctrEncrypt128(cypher128 cypher, u8 *nonce, u8 *plaintext, u8 length, u64 *r
             printf("===================================================\n");
 
 #endif
+            u8 count[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01};
             //STEP 4
-            byteAdd(counter, cypher.blockSize);
+            byteAdd(counter, cypher.blockSize, count);
         }
 
         //last block
