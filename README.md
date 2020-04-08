@@ -2,6 +2,9 @@
 
 The implementations follow the [implementation guide](https://nsacyber.github.io/simon-speck/implementations/ImplementationGuide1.1.pdf).
 
+Support CBC mode
+Support CTR mode
+
 # Disclaimer
 This implementation is for testing purposes **ONLY**  and safety is not guaranteed
 

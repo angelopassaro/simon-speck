@@ -1,4 +1,4 @@
-#define SPECK6496
+//#define SPECK6496
 //#define SPECK64128
 //#define SPECK128128
 //#define SPECK128192
@@ -7,7 +7,7 @@
 //#define SIMON64128
 //#define SIMON128128
 //#define SIMON128192
-//#define SIMON128256
+#define SIMON128256
 
 #ifdef SPECK6496
 #include "speck/speck6496.c"
