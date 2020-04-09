@@ -8,7 +8,6 @@
 * @param cypher Algorithm
 * @param nononce No random nonce
 * @param plaintext Plaintext to be encrypted
-* @param ciphertext Ciphertext resulting from the encryption
 * @param length Length of data bytes to be encrypted
 * @param rk Round key
 * @return The number of pad
@@ -20,7 +19,6 @@ void ctrEncrypt64(cypher64 cypher, u8 *nonce, u8 *plaintext, u8 length, u32 *rk)
 * @param cypher Algorithm
 * @param nononce No random nonce
 * @param ciphertext Ciphertext to be decrypted
-* @param plaintext Plaintext resulting from decryption
 * @param length Length of data bytes to be decrypted
 * @param rk Round key
 * @return The size of plaintext without pad
@@ -32,7 +30,6 @@ void ctrDecrypt64(cypher64 cypher, u8 *nonce, u8 *ciphertext, u8 length, u32 *rk
 * @param cypher Algorithm
 * @param nononce No random nonce
 * @param plaintext Plaintext to be encrypted
-* @param ciphertext Ciphertext resulting from the encryption
 * @param length Length of data bytes to be encrypted
 * @param rk Round key
 * @return The number of pad
@@ -44,7 +41,6 @@ void ctrEncrypt128(cypher128 cypher, u8 *nonce, u8 *plaintext, u8 length, u64 *r
 * @param cypher Algorithm
 * @param nononce No random nonce
 * @param ciphertext Ciphertext to be decrypted
-* @param plaintext Plaintext resulting from decryption
 * @param length Length of data bytes to be decrypted
 * @param rk Round key
 * @return The size of plaintext without pad

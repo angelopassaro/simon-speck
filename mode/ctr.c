@@ -14,7 +14,6 @@ void xor (u8 * in, u8 *out, int length) {
 
     void byteAdd(u8 *dst, int dstLength, u8 *count)
 {
-    // u8 count[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01};
     int carry = 0;
 
     for (int i = 0; i < dstLength; i++)
@@ -52,15 +51,15 @@ void ctrEncrypt64(cypher64 cypher, u8 *nonce, u8 *plaintext, u8 length, u32 *rk)
     printf("===================================================\n");
 #endif
 
-    if (length > cypher.blockSize)
-    {
-        last_block = length - cypher.blockSize;
+    // if (length > cypher.blockSize)
+    //  {
+    last_block = length - cypher.blockSize;
 #ifdef DEBUG
-        printf("Last block size: %d\n", last_block);
-        printf("===================================================\n");
+    printf("Last block size: %d\n", last_block);
+    printf("===================================================\n");
 
 #endif
-    }
+    //}
 
     if (length > cypher.blockSize)
     {
@@ -74,12 +73,11 @@ void ctrEncrypt64(cypher64 cypher, u8 *nonce, u8 *plaintext, u8 length, u32 *rk)
             printf("Block number: %d \n", block / cypher.blockSize);
             printf("Counter: \n");
             hex_print(counter, 0, cypher.blockSize);
-            printf("===================================================\n");
-
             printf("Nonce: \n");
+            hex_print(nonce, 0, cypher.blockSize);
+            printf("counter xor nonce:\n");
             hex_print(workingNonce, 0, cypher.blockSize);
             printf("===================================================\n");
-
 #endif
 
             //STEP 2
@@ -90,7 +88,7 @@ void ctrEncrypt64(cypher64 cypher, u8 *nonce, u8 *plaintext, u8 length, u32 *rk)
 #ifdef DEBUG
             printf("Encrypted nonce: \n");
             hex_print(ct, 0, cypher.blockSize);
-            printf("Plaintext \\ Ciphertext: \n");
+            printf("Plaintext block\\ Ciphertext block: \n");
             hex_print(plaintext, block, block + cypher.blockSize);
             printf("===================================================\n");
 
@@ -99,31 +97,64 @@ void ctrEncrypt64(cypher64 cypher, u8 *nonce, u8 *plaintext, u8 length, u32 *rk)
             //STEP3
             xor(ct, &plaintext[block], cypher.blockSize);
 #ifdef DEBUG
-            printf("Xored plaintext \\ ciphertext: \n");
+            printf("Xored plaintext block \\ ciphertext block: \n");
             hex_print(plaintext, block, block + cypher.blockSize);
             printf("===================================================\n");
 
 #endif
-            u8 count[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01};
-
             //STEP 4
+            u8 count[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01};
             byteAdd(counter, cypher.blockSize, count);
         }
+    }
 
-        //last block
-        BytesToWords32(workingNonce, Pt, cypher.blockSize);
-        cypher.encrypt(Pt, Ct, rk);
-        Words32ToBytes(Ct, ct, 2);
+    /*******************************last block**********************************/
 
-        xor(ct, &plaintext[block], length - block);
+    //STEP 1
+    memcpy(workingNonce, nonce, cypher.blockSize);
+    xor(counter, workingNonce, cypher.blockSize);
+#ifdef DEBUG
+    printf("Block number: %d \n", block / cypher.blockSize);
+    printf("Counter: \n");
+    hex_print(counter, 0, cypher.blockSize);
+    printf("Nonce: \n");
+    hex_print(nonce, 0, cypher.blockSize);
+    printf("counter xor nonce:\n");
+    hex_print(workingNonce, 0, cypher.blockSize);
+    printf("===================================================\n");
+#endif
+
+    //STEP 2
+
+    BytesToWords32(workingNonce, Pt, cypher.blockSize);
+    cypher.encrypt(Pt, Ct, rk);
+    Words32ToBytes(Ct, ct, 2);
 
 #ifdef DEBUG
-        printf("Plaintext \\ Ciphertext: \n");
-        hex_print(plaintext, 0, length);
-        printf("=======END DEBUG ENCRYPTION \\ DECRYPTION:==========\n");
+    printf("Encrypted nonce: \n");
+    hex_print(ct, 0, cypher.blockSize);
+    printf("Plaintext block \\ Ciphertext block: \n");
+    hex_print(plaintext, block, block + cypher.blockSize);
+    printf("===================================================\n");
 
 #endif
-    }
+
+    //STEP3
+    xor(ct, &plaintext[block], length - block);
+
+#ifdef DEBUG
+    printf("Xored plaintext block \\ ciphertext block: \n");
+    hex_print(plaintext, block, block + cypher.blockSize);
+    printf("===================================================\n");
+
+#endif
+
+#ifdef DEBUG
+    printf("Plaintext \\ Ciphertext: \n");
+    hex_print(plaintext, 0, length);
+    printf("=======END DEBUG ENCRYPTION \\ DECRYPTION:==========\n");
+
+#endif
 }
 
 void ctrDecrypt64(cypher64 cypher, u8 *nonce, u8 *ciphertext, u8 length, u32 *rk)
@@ -148,15 +179,15 @@ void ctrEncrypt128(cypher128 cypher, u8 *nonce, u8 *plaintext, u8 length, u64 *r
     printf("===================================================\n");
 #endif
 
-    if (length > cypher.blockSize)
-    {
-        last_block = length - cypher.blockSize;
+    // if (length > cypher.blockSize)
+    //  {
+    last_block = length - cypher.blockSize;
 #ifdef DEBUG
-        printf("Last block size: %d\n", last_block);
-        printf("===================================================\n");
+    printf("Last block size: %d\n", last_block);
+    printf("===================================================\n");
 
 #endif
-    }
+    //}
 
     if (length > cypher.blockSize)
     {
@@ -170,12 +201,11 @@ void ctrEncrypt128(cypher128 cypher, u8 *nonce, u8 *plaintext, u8 length, u64 *r
             printf("Block number: %d \n", block / cypher.blockSize);
             printf("Counter: \n");
             hex_print(counter, 0, cypher.blockSize);
-            printf("===================================================\n");
-
             printf("Nonce: \n");
+            hex_print(nonce, 0, cypher.blockSize);
+            printf("counter xor nonce:\n");
             hex_print(workingNonce, 0, cypher.blockSize);
             printf("===================================================\n");
-
 #endif
 
             //STEP 2
@@ -186,7 +216,7 @@ void ctrEncrypt128(cypher128 cypher, u8 *nonce, u8 *plaintext, u8 length, u64 *r
 #ifdef DEBUG
             printf("Encrypted nonce: \n");
             hex_print(ct, 0, cypher.blockSize);
-            printf("Plaintext \\ Ciphertext: \n");
+            printf("Plaintext block\\ Ciphertext block: \n");
             hex_print(plaintext, block, block + cypher.blockSize);
             printf("===================================================\n");
 
@@ -195,30 +225,64 @@ void ctrEncrypt128(cypher128 cypher, u8 *nonce, u8 *plaintext, u8 length, u64 *r
             //STEP3
             xor(ct, &plaintext[block], cypher.blockSize);
 #ifdef DEBUG
-            printf("Xored plaintext \\ ciphertext: \n");
+            printf("Xored plaintext block \\ ciphertext block: \n");
             hex_print(plaintext, block, block + cypher.blockSize);
             printf("===================================================\n");
 
 #endif
-            u8 count[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01};
             //STEP 4
+            u8 count[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01};
             byteAdd(counter, cypher.blockSize, count);
         }
+    }
 
-        //last block
-        BytesToWords64(workingNonce, Pt, cypher.blockSize);
-        cypher.encrypt(Pt, Ct, rk);
-        Words64ToBytes(Ct, ct, 2);
+    /*******************************last block**********************************/
 
-        xor(ct, &plaintext[block], length - block);
+    //STEP 1
+    memcpy(workingNonce, nonce, cypher.blockSize);
+    xor(counter, workingNonce, cypher.blockSize);
+#ifdef DEBUG
+    printf("Block number: %d \n", block / cypher.blockSize);
+    printf("Counter: \n");
+    hex_print(counter, 0, cypher.blockSize);
+    printf("Nonce: \n");
+    hex_print(nonce, 0, cypher.blockSize);
+    printf("counter xor nonce:\n");
+    hex_print(workingNonce, 0, cypher.blockSize);
+    printf("===================================================\n");
+#endif
+
+    //STEP 2
+
+    BytesToWords64(workingNonce, Pt, cypher.blockSize);
+    cypher.encrypt(Pt, Ct, rk);
+    Words64ToBytes(Ct, ct, 2);
 
 #ifdef DEBUG
-        printf("Plaintext \\ Ciphertext: \n");
-        hex_print(plaintext, 0, length);
-        printf("=======END DEBUG ENCRYPTION \\ DECRYPTION:==========\n");
+    printf("Encrypted nonce: \n");
+    hex_print(ct, 0, cypher.blockSize);
+    printf("Plaintext block \\ Ciphertext block: \n");
+    hex_print(plaintext, block, block + cypher.blockSize);
+    printf("===================================================\n");
 
 #endif
-    }
+
+    //STEP3
+    xor(ct, &plaintext[block], length - block);
+
+#ifdef DEBUG
+    printf("Xored plaintext block \\ ciphertext block: \n");
+    hex_print(plaintext, block, block + cypher.blockSize);
+    printf("===================================================\n");
+
+#endif
+
+#ifdef DEBUG
+    printf("Plaintext \\ Ciphertext: \n");
+    hex_print(plaintext, 0, length);
+    printf("=======END DEBUG ENCRYPTION \\ DECRYPTION:==========\n");
+
+#endif
 }
 
 void ctrDecrypt128(cypher128 cypher, u8 *nonce, u8 *ciphertext, u8 length, u64 *rk)
