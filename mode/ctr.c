@@ -51,15 +51,12 @@ void ctrEncrypt64(cypher64 cypher, u8 *nonce, u8 *plaintext, u8 length, u32 *rk)
     printf("===================================================\n");
 #endif
 
-    // if (length > cypher.blockSize)
-    //  {
     last_block = length - cypher.blockSize;
 #ifdef DEBUG
     printf("Last block size: %d\n", last_block);
     printf("===================================================\n");
 
 #endif
-    //}
 
     if (length > cypher.blockSize)
     {
@@ -179,15 +176,12 @@ void ctrEncrypt128(cypher128 cypher, u8 *nonce, u8 *plaintext, u8 length, u64 *r
     printf("===================================================\n");
 #endif
 
-    // if (length > cypher.blockSize)
-    //  {
     last_block = length - cypher.blockSize;
 #ifdef DEBUG
     printf("Last block size: %d\n", last_block);
     printf("===================================================\n");
 
 #endif
-    //}
 
     if (length > cypher.blockSize)
     {
